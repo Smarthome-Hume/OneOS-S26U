@@ -153,7 +153,7 @@ Yêu cầu (upstream README): **JDK 21**, Android SDK platform `android-37`
 Google Maven + Maven Central. Chi tiết ở `app-android/README.md`.
 
 ```sh
-git clone https://github.com/hutchet/OneOS-S26U.git
+git clone https://github.com/Smarthome-Hume/OneOS-S26U.git
 cd OneOS-S26U/app-android
 ./gradlew assembleProbeDebug   # Probe: không cần gì ngoài repo này
 ./gradlew test                # unit tests
