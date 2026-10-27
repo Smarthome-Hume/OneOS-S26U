@@ -142,11 +142,9 @@ class ProfilesTest {
             assertEquals(listOf(Profiles.ID_NOTE_EXPECT_NO_START), p.notes.map { it.id })
             assertEquals(Level.WARN, p.notes.single().level)
         }
+        // S26U fork: BUILT_IN is S26U only.
         assertEquals(
-            listOf(
-                Profiles.F8U, Profiles.S_ULTRA_8850, Profiles.S_ULTRA_8750, Profiles.S_8750, Profiles.FOLD7, Profiles.S_PLUS_8750, Profiles.FOLD8,
-                Profiles.S_8850, Profiles.S_8850_JP, Profiles.S_ULTRA_8650, Profiles.S_8550, Profiles.S_PLUS_8550, Profiles.S_PLUS_8850,
-            ),
+            listOf(Profiles.S_ULTRA_8850),
             Profiles.BUILT_IN,
         )
 
@@ -173,17 +171,22 @@ class ProfilesTest {
         assertNull(Profiles.F8U.choice(Images.ID_FIND_X9U))
         // The owner does not want the X9U (CN) image on the Fold: only the N6 and Pixel images there.
         // The Fold7 (0.4.8) takes the N6 image only.
-        assertEquals(listOf(Profiles.F8U, Profiles.FOLD7, Profiles.FOLD8), Profiles.BUILT_IN.filter { it.form == FormFactor.FOLD })
+        assertEquals(emptyList<PhoneProfile>(), Profiles.BUILT_IN.filter { it.form == FormFactor.FOLD })
         assertTrue(Profiles.BUILT_IN.filter { it.choice(Images.ID_FIND_X9U) != null }.all { it.form == FormFactor.BAR })
         // The Pixel 11 Fold image on the SM8850 folds (it ran on the Fold8 Ultra; 0.4.10 the Z Fold8, untested), with the Fold's set.
-        assertEquals(listOf(Profiles.F8U, Profiles.FOLD8), Profiles.BUILT_IN.filter { it.choice(Images.ID_PIXEL_YOGI) != null })
+        assertEquals(emptyList<PhoneProfile>(), Profiles.BUILT_IN.filter { it.choice(Images.ID_PIXEL_YOGI) != null })
         // Pixel images on SM8850 phones only: Pixel's system code needs SVE, which the older chips lack.
         assertTrue(Profiles.BUILT_IN.filter { it.socModel != "SM8850" }.all { p -> p.images().none { it.family == SystemFamily.PIXEL } })
         assertEquals(PackageSets.ID_PIXEL_F8U, Profiles.F8U.choice(Images.ID_PIXEL_YOGI)!!.packageSetId)
-        // 0.4.11: every bar phone that takes the CN build takes the IN build too, listed first; never a fold.
+        // S26U fork: S26U takes the CN build first; the IN build is NOT
+        // offered on S26U until it runs there.
         assertEquals(
+            listOf(Profiles.S_ULTRA_8850),
             Profiles.BUILT_IN.filter { it.choice(Images.ID_FIND_X9U) != null },
-            Profiles.BUILT_IN.filter { it.choices.firstOrNull() == xin },
+        )
+        assertEquals(
+            emptyList<PhoneProfile>(),
+            Profiles.BUILT_IN.filter { it.choice(Images.ID_FIND_X9U_IN) != null },
         )
         assertTrue(Profiles.BUILT_IN.filter { it.form == FormFactor.FOLD }.all { it.choice(Images.ID_FIND_X9U_IN) == null })
         // Where the CN build has run it stays the preselected one until the IN build has.

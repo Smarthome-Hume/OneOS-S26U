@@ -38,7 +38,8 @@ class PackageSetsTest {
         assertEquals("out/overlays_x9u_in_r50", xin.sourceDir)
         assertEquals(Images.ID_FIND_X9U_IN, xin.imageId)
         assertEquals("out/overlays_pixel_yogi", pixel.sourceDir)
-        assertEquals(listOf(n6, x9u, xin, pixel, PackageSets.PIXEL_SULTRA), PackageSets.ALL)
+        // S26U fork: ALL is only the two S26U sets.
+        assertEquals(listOf(x9u, PackageSets.PIXEL_SULTRA), PackageSets.ALL)
         // Owner: leave out only dead weight.
         assertEquals(listOf("tethering_payload.img"), n6.omitted)
         assertEquals(listOf("tethering_payload.img", "OneOSWallpapersFoldGrid.apk"), x9u.omitted)
@@ -246,8 +247,10 @@ class PackageSetsTest {
             assumeTrue("${f.name} not there yet", f.isFile)
             assertEquals(s.id, emptyList<String>(), s.check(f.readText()))
         }
-        // The IN sets' lists are gone with the image (0.3.7).
-        assertEquals(PackageSets.ALL.map { "${it.id}.sha256" }.toSet(), dir!!.list()!!.filter { it.endsWith(".sha256") }.toSet())
+        // S26U fork: ALL's lists must all be present; other sets' lists may
+        // still sit in packages/ as legacy files, they are not offered.
+        // (Deleting them is Phase 2 cleanup for the Notion AI worker.)
+        assertTrue(dir!!.list()!!.filter { it.endsWith(".sha256") }.toSet().containsAll(PackageSets.ALL.map { "${it.id}.sha256" }))
     }
 
     @Test
